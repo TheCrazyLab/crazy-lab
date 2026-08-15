@@ -1,0 +1,47 @@
+{
+  "name": "dsh-zhihu",
+  "version": "0.1.0",
+  "description": "DeepSeek Harness plugin: let the agent read, fetch and parse Zhihu (answers, columns, comments).",
+  "license": "MIT",
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib",
+    "cordis.patch.yml"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh-tools": "^0.1.0-rc.6",
+    "cordis": "^3.0.0"
+  },
+  "dependencies": {
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@deepseek-ai/dsh-tools": "^0.1.0-rc.6",
+    "cordis": "^3.0.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.6.0"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "zhihu",
+    "agent-tools"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gengyueworks/dsh-zhihu.git"
+  }
+}

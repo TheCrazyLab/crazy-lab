@@ -1,0 +1,10 @@
+# DSH bundle patch — mounted by `dsh plugin --profile web add "github:gengyueworks/dsh-zhihu#main"`.
+# Declares one plugin row. The id is the row key; `package` is the npm package
+# name; `config` is forwarded to apply(ctx, config). Adjust field names to match
+# the bundle schema of your installed dsh version if needed.
+- id: zhihu
+  package: dsh-zhihu
+  config:
+    userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
+    timeoutMs: 15000
+    cache: true
