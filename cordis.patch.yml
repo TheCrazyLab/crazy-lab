@@ -1,4 +1,4 @@
-# DSH bundle patch — mounted by `dsh plugin --profile web add "github:gengyueworks/dsh-zhihu#main"`.
+# DSH bundle patch — mounted by `dsh plugin --profile web add "github:dsh-zhihu/dsh-zhihu#main"`.
 # Declares one plugin row. The `id` is the row key; `name` is the npm package
 # name; `config` is forwarded to apply(ctx, config).
 - insert:

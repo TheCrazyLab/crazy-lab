@@ -12,7 +12,7 @@ DeepSeek Harness（dsh）插件：让 agent 能**读 / 抓 / 解析知乎**—�
 npx @deepseek-ai/dsh web
 
 # 安装本插件（打 #dsh-plugin 话题即可被生态索引）
-dsh plugin --profile web add "github:gengyueworks/dsh-zhihu#main"
+dsh plugin --profile web add "github:dsh-zhihu/dsh-zhihu#main"
 ```
 
 装好后，agent 就能直接调用下面三个工具。
@@ -65,7 +65,7 @@ npm test           # vitest：解析边界 + 三个工具的 execute/render/错�
 ```bash
 npx @deepseek-ai/dsh web
 # 另开一个终端：
-dsh plugin --profile web add "github:gengyueworks/dsh-zhihu#main"
+dsh plugin --profile web add "github:dsh-zhihu/dsh-zhihu#main"
 ```
 
 装好后在 dsh 的 agent 会话里直接说：
@@ -82,4 +82,4 @@ dsh plugin --profile web add "github:gengyueworks/dsh-zhihu#main"
 
 ## License
 
-MIT © gengyueworks
+MIT © dsh-zhihu
