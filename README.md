@@ -16,13 +16,13 @@
 
 ## 这里现在有什么
 
-### 1. dsh-zhihu —— 让 AI 能读知乎的小插件
+### 1. 知乎阅读插件（实验室里的一个实验）
 
 实验室里最早的一个实验，偏门但完整。知乎用户本就不多，所以它更像个技术玩具，不是产品——留着，因为好玩。
 
 ```bash
 npx @deepseek-ai/dsh web
-dsh plugin --profile web add "github:dsh-zhihu/dsh-zhihu#main"
+dsh plugin --profile web add "github:TheCrazyLab/crazy-lab#main"
 ```
 
 装好后 agent 能直接调三个工具：`zhihu_fetch_column`（抓专栏）、`zhihu_fetch_answer`（抓回答）、`zhihu_search`（搜知乎）。知乎对数据中心 IP 会甩 403，真要稳定抓得把请求路由到你本机已登录的浏览器——插件已经留好注入点，解析逻辑可以完全复用。
@@ -51,4 +51,4 @@ dsh plugin --profile web add "github:dsh-zhihu/dsh-zhihu#main"
 
 ---
 
-MIT © CRAZY LAB
+MIT © TheCrazyLab
