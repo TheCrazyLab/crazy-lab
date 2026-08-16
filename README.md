@@ -53,10 +53,12 @@ dsh plugin --profile web add "github:gengyueworks/dsh-zhihu#main"
 npm install        # 或 pnpm install
 npm run build      # tsc -> lib/（含 lib/types/*.d.ts，对应 package.json 的 exports）
 npm run typecheck
+npm test           # vitest：解析边界 + 三个工具的 execute/render/错误路径
 ```
 
 `src/zhihu/` 是与框架无关的核心逻辑（fetch / parse / tools），可以脱离 dsh 单独测试；
 `src/runtime.ts` 通过 `ctx.tools.register(defineTool(...))` 把工具挂进 dsh。
+测试覆盖：`extractInitialState` 对 `({...})` 与 `JSON.parse("...")` 两种形态、`pickField` 词边界（避免 `subTitle`/`mytitle` 误匹配）、`htmlToText` 去标签/实体、登录墙检测，以及三个工具的成功 / 登录墙 / 错误参数的 execute+render 行为。
 
 ## 本地验证（先确认插件真的装上了）
 
