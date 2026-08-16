@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>全球冲浪随机器 · Daily Surf</title>
+<style>
+  :root{
+    --bg:#0e0e14; --card:#16161f; --ink:#f3f3f7; --dim:#9a9ab0;
+    --hot:#ff5d73; --cool:#3dd7d0; --yell:#ffd166;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(1200px 600px at 20% -10%, #1d1d2e 0%, var(--bg) 60%);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    color:var(--ink);padding:24px}
+  .wrap{width:100%;max-width:560px}
+  h1{font-size:30px;margin:0 0 4px;letter-spacing:1px}
+  h1 .en{color:var(--cool);font-weight:600}
+  .sub{color:var(--dim);margin:0 0 22px;font-size:14px}
+  .card{background:var(--card);border:1px solid #26263a;border-radius:18px;padding:26px;min-height:170px;
+    box-shadow:0 20px 60px rgba(0,0,0,.4);transition:.25s}
+  .tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:1px;padding:5px 12px;border-radius:999px;margin-bottom:14px}
+  .prompt{font-size:20px;line-height:1.6}
+  button{margin-top:22px;width:100%;border:0;border-radius:14px;padding:16px;font-size:17px;font-weight:700;
+    color:#0e0e14;background:linear-gradient(135deg,var(--hot),var(--yell));cursor:pointer;
+    box-shadow:0 10px 30px rgba(255,93,115,.35);transition:.15s}
+  button:active{transform:translateY(2px)}
+  .foot{margin-top:16px;color:var(--dim);font-size:12px;text-align:center}
+  a{color:var(--cool)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>全球冲浪随机器 <span class="en">Daily Surf</span></h1>
+  <p class="sub">点一下，今天该去哪儿浪，它替你决定。</p>
+  <div class="card" id="card">
+    <span class="tag" id="tag">准备就绪</span>
+    <div class="prompt" id="prompt">按下按钮，开始今天的冲浪 🏄</div>
+  </div>
+  <button id="go">去冲浪 🏄</button>
+  <p class="foot">CRAZY LAB · 疯狂实验室 — 一个只收好玩东西的地方</p>
+</div>
+<script>
+const items = [
+  {c:"冷知识", t:"去查一个你从没听过的冷知识，然后讲给一个人听。", color:"#3dd7d0"},
+  {c:"奇怪网站", t:"搜「最无聊的网站」合集，挑一个点进去，待满 3 分钟。", color:"#ffd166"},
+  {c:"一句话挑战", t:"用一句话写下你理想中的 App，别管它能不能做出来。", color:"#ff5d73"},
+  {c:"云旅行", t:()=>{const la=(Math.random()*130-65).toFixed(4), lo=(Math.random()*360-180).toFixed(4);
+    return '打开地图，定位到 '+la+', '+lo+'。住在这儿的人，这会儿在干嘛？ <a href="https://www.openstreetmap.org/#map=6/'+la+'/'+lo+'" target="_blank">去看看 →</a>';}, color:"#9b8cff"},
+  {c:"随机年份", t:()=>{const y=Math.floor(Math.random()*126)+1900;
+    return '回到 '+y+' 年，读一件那一年发生的事，然后忘掉今天的新闻。';}, color:"#5ad1a5"},
+  {c:"音乐盲盒", t:"随机跳到一个你从没听过的国家的电台，听完整一首歌。", color:"#ff9f6b"},
+  {c:"反算法", t:"今天故意点开一个你绝对不会看的话题，看看世界另一头在聊什么。", color:"#7ec4ff"},
+];
+const card=document.getElementById('card'), tag=document.getElementById('tag'), prompt=document.getElementById('prompt'), btn=document.getElementById('go');
+btn.onclick=()=>{
+  const it=items[Math.floor(Math.random()*items.length)];
+  const txt=typeof it.t==="function"?it.t():it.t;
+  tag.textContent=it.c; tag.style.background=it.color+"22"; tag.style.color=it.color;
+  prompt.innerHTML=txt;
+  card.style.transform="scale(.98)"; setTimeout(()=>card.style.transform="scale(1)",120);
+};
+</script>
+</body>
+</html>

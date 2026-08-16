@@ -1,85 +1,54 @@
-# dsh-zhihu
+# CRAZY LAB · 疯狂实验室
 
-DeepSeek Harness（dsh）插件：让 agent 能**读 / 抓 / 解析知乎**——回答、专栏文章、搜索结果。
-属于「知乎 DSH 插件组」的核心地基，其余 `dsh-zhihu-collector` / `dsh-zhihu-tracker` / `dsh-zhihu-rec` / `dsh-zhihu-export` 都挂在它上面。
+> 一个包罗万象、全世界冲浪、勇敢乱玩的实验室。
+> 这里不端着、不装专业，专门收那些「有点意思、但放在正经品牌号上刷屏不合适」的小玩意。
 
-> 本插件是 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 生态的一部分，遵循 "Everything is a Plugin"。
+你不需要是个大项目。这里什么都能进：
 
-## 安装
+- 一个 30 行的小脚本
+- 一个奇怪的浏览器玩具
+- 一个没人要、但你自己觉得好玩的插件
+- 一个「今天突然想到的」实验
 
-```bash
-# 需要先在跑 dsh（开发者预览版）
-npx @deepseek-ai/dsh web
+我们只认三件事：**有趣、能玩、不无聊。**
 
-# 安装本插件（打 #dsh-plugin 话题即可被生态索引）
-dsh plugin --profile web add "github:dsh-zhihu/dsh-zhihu#main"
-```
+---
 
-装好后，agent 就能直接调用下面三个工具。
+## 这里现在有什么
 
-## 提供的工具
+### 1. dsh-zhihu —— 让 AI 能读知乎的小插件
 
-| 工具 | 作用 |
-|------|------|
-| `zhihu_fetch_column` | 按 URL / ID 抓取并解析知乎专栏文章（`zhuanlan.zhihu.com/p/<id>`），返回干净的标题 / 作者 / 正文 |
-| `zhihu_fetch_answer` | 按 URL 抓取并解析知乎回答 / 问题页，返回干净的回答正文 |
-| `zhihu_search` | 按关键词搜索知乎，返回结果链接列表，便于先发现再精读 |
-
-## 配置
-
-`cordis.patch.yml` 里的 `config` 会传给插件：
-
-| 字段 | 默认 | 说明 |
-|------|------|------|
-| `userAgent` | 桌面 Chrome UA | 部分知乎页面对 UA / Referer 敏感 |
-| `timeoutMs` | `15000` | 单次抓取超时 |
-| `cache` | `true` | 预留：是否缓存已抓页面 |
-
-## 实现说明
-
-- 知乎页面把状态嵌在 `window.__INITIAL_STATE__ = ({...})`（不是严格 JSON）里，插件用容错正则提取并剥离 HTML 成纯文本。
-- 抓取带浏览器 UA + `Referer: https://www.zhihu.com/`，尽量拿到完整页面。
-- 若遇到登录墙导致解析不到正文，工具会如实返回「无法解析 / 可能需要登录」，不会编造内容。
-
-## 已知限制 / 生产化方向
-
-- **403 反爬**：纯 Node 端抓取在数据中心 IP / 未登录时会拿到 `HTTP 403`（已实测，正是 web 端直抓知乎遇到的风控墙）。
-- **正确姿势**：生产版应把抓取路由到用户**已登录的浏览器**（dsh 的 `web` 半边，即 `dsh-web-app` 提供的浏览器能力），类似 modlens 用 `ctx.inject` 挂浏览器半边 + loopback 路由的做法。`src/zhihu/tools.ts` 的 `buildTools(config, fetchImpl)` 已预留 `fetchImpl` 注入点，将来把浏览器端 fetch 传进来即可，解析逻辑完全复用。
-- 解析逻辑与抓取解耦，可脱离 dsh 单独测；当前 `fetchZhihu` 作为默认实现保留给可访问页面 / 本地调试。
-
-## 开发
-
-```bash
-npm install        # 或 pnpm install
-npm run build      # tsc -> lib/（含 lib/types/*.d.ts，对应 package.json 的 exports）
-npm run typecheck
-npm test           # vitest：解析边界 + 三个工具的 execute/render/错误路径
-```
-
-`src/zhihu/` 是与框架无关的核心逻辑（fetch / parse / tools），可以脱离 dsh 单独测试；
-`src/runtime.ts` 通过 `ctx.tools.register(defineTool(...))` 把工具挂进 dsh。
-测试覆盖：`extractInitialState` 对 `({...})` 与 `JSON.parse("...")` 两种形态、`pickField` 词边界（避免 `subTitle`/`mytitle` 误匹配）、`htmlToText` 去标签/实体、登录墙检测，以及三个工具的成功 / 登录墙 / 错误参数的 execute+render 行为。
-
-## 本地验证（先确认插件真的装上了）
+实验室里最早的一个实验，偏门但完整。知乎用户本就不多，所以它更像个技术玩具，不是产品——留着，因为好玩。
 
 ```bash
 npx @deepseek-ai/dsh web
-# 另开一个终端：
 dsh plugin --profile web add "github:dsh-zhihu/dsh-zhihu#main"
 ```
 
-装好后在 dsh 的 agent 会话里直接说：
+装好后 agent 能直接调三个工具：`zhihu_fetch_column`（抓专栏）、`zhihu_fetch_answer`（抓回答）、`zhihu_search`（搜知乎）。知乎对数据中心 IP 会甩 403，真要稳定抓得把请求路由到你本机已登录的浏览器——插件已经留好注入点，解析逻辑可以完全复用。
 
-> 用 zhihu_fetch_column 抓 https://zhuanlan.zhihu.com/p/2071956716355425552 ，告诉我标题和前两段。
+### 2. 全球冲浪随机器 / Daily Surf
 
-如果工具出现在 agent 可调用的清单里、并能返回「抓取到了但解析不到正文 / 403」这类**如实报错**而不是崩溃，说明插件骨架工作正常。
+点一下，今天该去哪儿浪，它替你决定：冷知识、奇怪网站、一句话挑战、随机坐标、随机年份、云旅行、音乐盲盒。纯前端，打开就玩 → [`experiments/surf.html`](experiments/surf.html)
 
-> ⚠️ **关于真实抓取**：本插件默认的抓取实现是 Node 端 fetch，而知乎对数据中心 IP / 未登录上下文会返回 `HTTP 403`。在你的本机（住宅 IP）通过 dsh 的 `web` 半边跑，仍可能命中 403——这是知乎风控，不是插件 bug。要让真实抓取稳定可用，下一步是把抓取路由到**已登录浏览器**（dsh `web` 半边 + loopback fetch），`buildTools(config, fetchImpl)` 已预留该注入点，解析逻辑可完全复用。
+---
 
-## 发布
+## 在研 / In the Lab（想法池，谁来都能认领）
 
-仓库已打 `#dsh-plugin` 话题，推到 GitHub 后会被 DeepSeek Harness 生态索引。
+- **随机城市漫步**：每天丢一个真实坐标 + 一张街景，逼你出门或云旅行。
+- **反算法**：把你的信息流反过来，专推你绝不会点的东西。
+- **一句话产品**：用一句话描述一个产品，几分钟做出来给你看。
+- **深夜电台**：随机播客 / 冷门音乐片段，陪你熬。
+- **AI 考古**：随机挖一个 1990–2010 年的网站 / 软件 / 梗，讲讲它后来怎样了。
 
-## License
+---
 
-MIT © dsh-zhihu
+## 规矩
+
+- 这是个独立站点，和任何正经品牌号**不挂钩、不链回**。
+- 能跑就发，跑不起来也发——实验嘛。
+- MIT。随便 fork、随便改、随便玩。
+
+---
+
+MIT © CRAZY LAB
