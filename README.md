@@ -31,6 +31,12 @@ dsh plugin --profile web add "github:TheCrazyLab/crazy-lab#main"
 
 点一下，今天该去哪儿浪，它替你决定：冷知识、奇怪网站、一句话挑战、随机坐标、随机年份、云旅行、音乐盲盒。纯前端，打开就玩 → [`experiments/surf.html`](experiments/surf.html)
 
+### 3. 知乎时间轴 · 记录 / Zhihu Records
+
+你最爱的时间线玩法：把读过的知乎链接一条条记下来，自动排成倒序时间轴，纯本地保存、能导出 JSON。越记越像一本自己的知乎编年史 → [`experiments/zhihu-records.html`](experiments/zhihu-records.html)
+
+> 🌐 在线版（GitHub Pages，浏览器直接打开就玩）：**https://thecrazylab.github.io/crazy-lab/**
+
 ---
 
 ## 在研 / In the Lab（想法池，谁来都能认领）

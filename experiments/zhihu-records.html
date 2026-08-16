@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>知乎时间轴 · 记录 — CRAZY LAB</title>
+<style>
+  :root{--bg:#0e0e12;--panel:#16161d;--ink:#f3f1ea;--dim:#9a96a8;--hot:#ff4d6d;--cool:#3ddc97;--accent:#ffd23f;--line:#2a2a35}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.6}
+  .wrap{max-width:760px;margin:0 auto;padding:40px 20px 80px}
+  .badge{font-size:12px;letter-spacing:.16em;color:var(--accent);border:1px solid var(--accent);border-radius:999px;padding:4px 12px}
+  h1{font-size:30px;margin:16px 0 4px}
+  .sub{color:var(--dim);margin:0 0 26px;font-size:14px}
+  .box{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:22px}
+  label{display:block;font-size:13px;color:var(--dim);margin:10px 0 6px}
+  input,textarea{width:100%;background:#000;color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px;font-family:inherit}
+  textarea{resize:vertical;min-height:60px}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  .row>*{flex:1;min-width:140px}
+  button{margin-top:14px;background:var(--hot);color:#fff;border:0;border-radius:10px;padding:11px 16px;font-size:14px;font-weight:700;cursor:pointer}
+  button.ghost{background:transparent;color:var(--dim);border:1px solid var(--line)}
+  button:hover{filter:brightness(1.08)}
+  .tl{position:relative;margin-top:8px;padding-left:22px}
+  .tl:before{content:"";position:absolute;left:6px;top:6px;bottom:6px;width:2px;background:var(--line)}
+  .item{position:relative;margin:0 0 18px}
+  .item:before{content:"";position:absolute;left:-19px;top:7px;width:11px;height:11px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px var(--bg)}
+  .item .date{font-size:12px;color:var(--cool);letter-spacing:.06em}
+  .item a{color:var(--ink);text-decoration:none;font-weight:600;word-break:break-all}
+  .item a:hover{color:var(--accent)}
+  .item .note{color:var(--dim);font-size:14px;margin-top:2px;white-space:pre-wrap}
+  .item .del{float:right;color:var(--dim);cursor:pointer;font-size:12px;border:0;background:none}
+  .item .del:hover{color:var(--hot)}
+  .empty{color:var(--dim);font-size:14px;text-align:center;padding:30px 0}
+  .count{color:var(--dim);font-size:13px;margin-bottom:8px}
+  .back{display:inline-block;margin-top:30px;color:var(--accent);text-decoration:none;font-size:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="badge">CRAZY LAB · 实验</span>
+  <h1>📜 知乎时间轴 · 记录</h1>
+  <p class="sub">把你读过的知乎链接一条条记下来，自动排成倒序时间轴。纯本地保存（localStorage），不上传任何服务器，可导出 / 导入 JSON。越记越像一本你自己的知乎编年史。</p>
+
+  <div class="box">
+    <label>知乎链接（或任意 URL）</label>
+    <input id="url" placeholder="https://www.zhihu.com/question/xxxx 或 zhuanlan.zhihu.com/p/xxxx" />
+    <label>备注（一句话也行，比如「这篇讲清楚了大模型推理成本」）</label>
+    <textarea id="note" placeholder="可选"></textarea>
+    <div class="row">
+      <div>
+        <label>日期</label>
+        <input id="date" type="date" />
+      </div>
+      <div>
+        <label>标签（可选，逗号分隔）</label>
+        <input id="tags" placeholder="干货, 收藏, 想二刷" />
+      </div>
+    </div>
+    <button id="add">＋ 记一笔</button>
+    <button class="ghost" id="exp">导出 JSON</button>
+    <button class="ghost" id="imp">导入 JSON</button>
+    <button class="ghost" id="clear">清空</button>
+    <input id="file" type="file" accept="application/json" style="display:none" />
+  </div>
+
+  <div class="count" id="count"></div>
+  <div class="tl" id="tl"></div>
+  <a class="back" href="../index.html">← 回到疯狂实验室</a>
+</div>
+
+<script>
+  const KEY = 'crazy-lab-zhihu-records';
+  const $ = (id) => document.getElementById(id);
+  const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; } };
+  const save = (a) => localStorage.setItem(KEY, JSON.stringify(a));
+  const fmt = (d) => d ? new Date(d).toISOString().slice(0,10) : new Date().toISOString().slice(0,10);
+
+  function render() {
+    const a = load().sort((x,y) => (y.date||'').localeCompare(x.date||''));
+    $('count').textContent = a.length ? `共 ${a.length} 条记录` : '';
+    if (!a.length) { $('tl').innerHTML = '<div class="empty">还没有记录。上面填一条，时间轴就从今天开始长。</div>'; return; }
+    $('tl').innerHTML = a.map((r,i) => `
+      <div class="item">
+        <button class="del" data-i="${i}">删除</button>
+        <div class="date">${r.date||''}</div>
+        <a href="${r.url}" target="_blank" rel="noopener">${r.url}</a>
+        ${r.note ? `<div class="note">${escapeHtml(r.note)}</div>` : ''}
+        ${r.tags && r.tags.length ? `<div class="note">🏷 ${r.tags.map(escapeHtml).join(' · ')}</div>` : ''}
+      </div>`).join('');
+    $('tl').querySelectorAll('.del').forEach(b => b.onclick = () => {
+      const arr = load(); arr.splice(Number(b.dataset.i), 1); save(arr); render();
+    });
+  }
+  const escapeHtml = (s) => s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  $('add').onclick = () => {
+    const url = $('url').value.trim(); if (!url) { alert('先贴个链接'); return; }
+    const arr = load();
+    arr.push({ url, note: $('note').value.trim(), date: $('date').value || fmt(), tags: $('tags').value.split(',').map(t=>t.trim()).filter(Boolean) });
+    save(arr); $('url').value=''; $('note').value=''; $('tags').value=''; render();
+  };
+  $('exp').onclick = () => {
+    const blob = new Blob([JSON.stringify(load(), null, 2)], {type:'application/json'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = 'zhihu-records.json'; a.click();
+  };
+  $('imp').onclick = () => $('file').click();
+  $('file').onchange = (e) => {
+    const f = e.target.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = () => { try { const arr = JSON.parse(r.result); save(load().concat(arr)); render(); } catch { alert('JSON 解析失败'); } };
+    r.readAsText(f);
+  };
+  $('clear').onclick = () => { if (confirm('清空全部记录？不可恢复。')) { localStorage.removeItem(KEY); render(); } };
+  $('date').value = fmt();
+  render();
+</script>
+</body>
+</html>
