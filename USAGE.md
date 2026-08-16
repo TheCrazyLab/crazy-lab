@@ -11,7 +11,6 @@
 | 玩具 | 地址 | 每天怎么玩 |
 |---|---|---|
 | 🌊 全球冲浪随机器 | https://thecrazylab.github.io/crazy-lab/experiments/surf.html | 打开点一下，今天去哪儿浪它替你决定 |
-| 📜 知乎时间轴·记录 | https://thecrazylab.github.io/crazy-lab/experiments/zhihu-records.html | 把读过的知乎链接贴进去，自动排成倒序时间轴；数据只存在你浏览器本地 |
 
 这两个是**已完成**的，打开就能用，可以放心分享。
 
