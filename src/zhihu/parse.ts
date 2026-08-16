@@ -57,7 +57,7 @@ export function parseArticle(html: string): ParsedArticle {
     title: title ? htmlToText(title) : undefined,
     author: author ? htmlToText(author) : undefined,
     content: content ? htmlToText(content) : undefined,
-    createdAt,
+    createdAt: createdAt ?? undefined,
   }
 }
 

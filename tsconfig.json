@@ -9,6 +9,7 @@
     "outDir": "lib",
     "rootDir": "src",
     "declaration": true,
+    "declarationDir": "lib/types",
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true
   },

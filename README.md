@@ -50,13 +50,29 @@ dsh plugin --profile web add "github:gengyueworks/dsh-zhihu#main"
 ## 开发
 
 ```bash
-pnpm install
-pnpm build       # tsc -> lib/
-pnpm typecheck
+npm install        # 或 pnpm install
+npm run build      # tsc -> lib/（含 lib/types/*.d.ts，对应 package.json 的 exports）
+npm run typecheck
 ```
 
 `src/zhihu/` 是与框架无关的核心逻辑（fetch / parse / tools），可以脱离 dsh 单独测试；
-`src/runtime.ts` 通过 `ctx.tools.register(...)` 把工具挂进 dsh。
+`src/runtime.ts` 通过 `ctx.tools.register(defineTool(...))` 把工具挂进 dsh。
+
+## 本地验证（先确认插件真的装上了）
+
+```bash
+npx @deepseek-ai/dsh web
+# 另开一个终端：
+dsh plugin --profile web add "github:gengyueworks/dsh-zhihu#main"
+```
+
+装好后在 dsh 的 agent 会话里直接说：
+
+> 用 zhihu_fetch_column 抓 https://zhuanlan.zhihu.com/p/2071956716355425552 ，告诉我标题和前两段。
+
+如果工具出现在 agent 可调用的清单里、并能返回「抓取到了但解析不到正文 / 403」这类**如实报错**而不是崩溃，说明插件骨架工作正常。
+
+> ⚠️ **关于真实抓取**：本插件默认的抓取实现是 Node 端 fetch，而知乎对数据中心 IP / 未登录上下文会返回 `HTTP 403`。在你的本机（住宅 IP）通过 dsh 的 `web` 半边跑，仍可能命中 403——这是知乎风控，不是插件 bug。要让真实抓取稳定可用，下一步是把抓取路由到**已登录浏览器**（dsh `web` 半边 + loopback fetch），`buildTools(config, fetchImpl)` 已预留该注入点，解析逻辑可完全复用。
 
 ## 发布
 

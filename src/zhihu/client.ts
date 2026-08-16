@@ -1,4 +1,4 @@
-import type { ZhihuConfig } from '../config.js'
+import type { Config } from '../config.js'
 
 const ZHIHU_REFERER = 'https://www.zhihu.com/'
 
@@ -11,9 +11,21 @@ const ZHIHU_REFERER = 'https://www.zhihu.com/'
 // modlens uses with `ctx.inject`. For that, pass a browser-backed fetchImpl
 // into buildTools() instead of this Node fetch. This function stays as the
 // offline / accessible-page default.
-export async function fetchZhihu(url: string, config: ZhihuConfig): Promise<string> {
+export async function fetchZhihu(
+  url: string,
+  config: Config,
+  signal?: AbortSignal
+): Promise<string> {
   const controller = new AbortController()
   const timer = setTimeout(() => controller.abort(), config.timeoutMs)
+  let onAbort: (() => void) | undefined
+  if (signal) {
+    if (signal.aborted) controller.abort()
+    else {
+      onAbort = () => controller.abort()
+      signal.addEventListener('abort', onAbort, { once: true })
+    }
+  }
   try {
     const res = await fetch(url, {
       headers: {
@@ -30,5 +42,6 @@ export async function fetchZhihu(url: string, config: ZhihuConfig): Promise<stri
     return await res.text()
   } finally {
     clearTimeout(timer)
+    if (onAbort && signal) signal.removeEventListener('abort', onAbort)
   }
 }

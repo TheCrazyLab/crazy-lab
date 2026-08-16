@@ -8,7 +8,7 @@
 - 运行时：`src/runtime.ts` 的 `apply(ctx, config)` 通过 `ctx.tools.register(...)` 注册工具。
 - 框架无关逻辑放在 `src/zhihu/`：`client.ts`（抓取）、`parse.ts`（解析）、`tools.ts`（工具定义）。
 - manifest：`package.json` 的 `dsh.bundle.patch` 指向 `cordis.patch.yml`。
-- peer 依赖 `@deepseek-ai/dsh-tools` 与 `cordis`；`ctx.tools.register` 的真实签名以安装版本为准。
+- peer 依赖 `@deepseek-ai/dsh-tools` 与 `@deepseek-ai/cordis`；`ctx.tools.register` 的真实签名以安装版本为准（当前对齐 dsh-tools `0.1.0-rc.6`）。
 
 ## 改动底线
 
